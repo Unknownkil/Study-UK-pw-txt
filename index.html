@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Video URL Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: 2px solid #448EE4;
+            background-color: #fff;
+            color: #333;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #336bb3;
+        }
+
+        .url-list {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .url-list a {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            color: #448EE4;
+            text-decoration: none;
+            word-wrap: break-word;
+            transition: all 0.3s ease;
+        }
+
+        .url-list a:hover {
+            color: #336bb3;
+            text-decoration: underline;
+        }
+
+        .url-list a::before {
+            content: '🔗 ';
+            color: #448EE4;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Your TXT File</h1>
+    <p>Select a TXT file containing <strong>master.mpd</strong> URLs, and the links will be converted.</p>
+    <input type="file" id="fileInput" accept=".txt">
+
+    <div class="url-list" id="urlList"></div>
+
+    <footer>© 2024 Video URL Converter | Designed for Professionals</footer>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    processFileContent(text);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function processFileContent(content) {
+            const lines = content.split('\n');
+            const urlListDiv = document.getElementById('urlList');
+            urlListDiv.innerHTML = '';  // Clear any previous URLs
+
+            lines.forEach(line => {
+                const trimmedLine = line.trim();
+                if (trimmedLine.includes('master.mpd')) {
+                    const videoId = extractVideoId(trimmedLine);
+                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/240/main.m3u8`;
+                    const link = document.createElement('a');
+                    link.href = `vlc://${newUrl}`;
+                    link.textContent = newUrl;
+                    urlListDiv.appendChild(link);
+                }
+            });
+        }
+
+        function extractVideoId(url) {
+            const parts = url.split('/');
+            return parts[parts.length - 2];  // Assuming video ID is always the second last part
+        }
+    </script>
+</body>
+</html>
