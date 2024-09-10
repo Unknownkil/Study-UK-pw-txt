@@ -13,8 +13,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
-            color: #333;
+            background: url('https://iili.io/daise3u.md.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-blend-mode: multiply;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -24,30 +27,50 @@
         }
 
         h1 {
-            color: #333;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         p {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 20px;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #ddd;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
         }
 
-        input[type="file"] {
-            padding: 12px 20px;
-            border-radius: 6px;
-            border: 2px solid #448EE4;
-            background-color: #fff;
-            color: #333;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+        .file-upload-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 50px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #448EE4, #336bb3);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .file-upload-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .file-upload-container input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
             cursor: pointer;
         }
 
-        input[type="file"]:hover {
-            border-color: #336bb3;
+        .file-upload-container span {
+            font-size: 1.1rem;
+            color: #fff;
+            letter-spacing: 1px;
         }
 
         .url-list {
@@ -55,43 +78,46 @@
             width: 100%;
             max-width: 800px;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
             text-align: left;
         }
 
-        .url-list a {
-            display: block;
+        .url-list p {
+            color: #88c0ff;
             margin-bottom: 12px;
-            font-size: 1.1rem;
-            color: #448EE4;
-            text-decoration: none;
+            font-size: 1.2rem;
             word-wrap: break-word;
             transition: all 0.3s ease;
         }
 
-        .url-list a:hover {
-            color: #336bb3;
-            text-decoration: underline;
+        .url-list a {
+            color: #ffffff;
+            text-decoration: none;
         }
 
-        .url-list a::before {
-            content: '🔗 ';
-            color: #448EE4;
+        .url-list a:hover {
+            text-decoration: underline;
         }
 
         footer {
             margin-top: 40px;
             font-size: 0.9rem;
-            color: #777;
+            color: #ccc;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
     <h1>Upload Your TXT File</h1>
     <p>Select a TXT file containing <strong>master.mpd</strong> URLs, and the links will be converted.</p>
-    <input type="file" id="fileInput" accept=".txt">
+
+    <!-- Custom File Uploader Button -->
+    <div class="file-upload-container">
+        <span>Upload TXT File</span>
+        <input type="file" id="fileInput" accept=".txt">
+    </div>
 
     <div class="url-list" id="urlList"></div>
 
@@ -119,11 +145,12 @@
                 const trimmedLine = line.trim();
                 if (trimmedLine.includes('master.mpd')) {
                     const videoId = extractVideoId(trimmedLine);
-                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/240/main.m3u8`;
-                    const link = document.createElement('a');
-                    link.href = `vlc://${newUrl}`;
-                    link.textContent = newUrl;
-                    urlListDiv.appendChild(link);
+                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/360/main.m3u8`;
+                    const originalText = trimmedLine.split('master.mpd')[0].trim();
+
+                    const para = document.createElement('p');
+                    para.innerHTML = `${originalText} ➔ <a href="vlc://${newUrl}" target="_blank">${newUrl}</a>`;
+                    urlListDiv.appendChild(para);
                 }
             });
         }
