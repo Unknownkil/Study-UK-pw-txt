@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyUK 𝕊𝔻𝕍_TxT_video_VLC_streamer</title>
+    <title>𝕊𝔻𝕍_TxT_video_VLC_streamer</title>
     <style>
         * {
             margin: 0;
@@ -107,6 +107,70 @@
             color: #ccc;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
         }
+
+        /* Button for downloading links */
+        .download-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #448EE4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Download Icon and Modal Styling */
+        .download-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px;
+            cursor: pointer;
+        }
+
+        #urlModal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        #urlModal .modal-content {
+            margin: 10% auto;
+            padding: 20px;
+            background-color: white;
+            width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        #urlModal ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #urlModal ul li {
+            margin-bottom: 10px;
+        }
+
+        #closeModal {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #448EE4;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -121,9 +185,26 @@
 
     <div class="url-list" id="urlList"></div>
 
-    <footer>© 2024 Video URL Converter | Designed for SDV_BOTS</footer>
+    <footer>© 2024 Video URL Converter | Designed By SDV_BOTS</footer>
+
+    <!-- Button to download plain URLs as a TXT file -->
+    <button class="download-btn" id="downloadPlainUrls">Download change Links txt</button>
+
+    <!-- Download Icon -->
+    <img src="https://iili.io/dUMkorb.md.jpg" class="download-icon" id="showUrls" alt="Download URLs">
+
+    <!-- Modal for displaying URLs -->
+    <div id="urlModal">
+        <div class="modal-content">
+            <h2>Download Changed URLs</h2>
+            <ul id="urlListModal"></ul>
+            <button id="closeModal">Close</button>
+        </div>
+    </div>
 
     <script>
+        let convertedUrls = [];
+
         document.getElementById('fileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -140,17 +221,21 @@
             const lines = content.split('\n');
             const urlListDiv = document.getElementById('urlList');
             urlListDiv.innerHTML = '';  // Clear any previous URLs
+            convertedUrls = [];  // Clear the previous converted URLs
 
             lines.forEach(line => {
                 const trimmedLine = line.trim();
                 if (trimmedLine.includes('master.mpd')) {
                     const videoId = extractVideoId(trimmedLine);
-                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/360/main.m3u8`;
+                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/240/main.m3u8`;
                     const originalText = trimmedLine.split('master.mpd')[0].trim();
 
                     const para = document.createElement('p');
                     para.innerHTML = `${originalText} ➔ <a href="vlc://${newUrl}" target="_blank">${newUrl}</a>`;
                     urlListDiv.appendChild(para);
+
+                    // Store the plain URL for the download function
+                    convertedUrls.push(newUrl);
                 }
             });
         }
@@ -159,6 +244,50 @@
             const parts = url.split('/');
             return parts[parts.length - 2];  // Assuming video ID is always the second last part
         }
+
+        // Modal and download logic
+        var showUrlsBtn = document.getElementById('showUrls');
+        var urlModal = document.getElementById('urlModal');
+        var closeModal = document.getElementById('closeModal');
+        var urlListModal = document.getElementById('urlListModal');
+
+        showUrlsBtn.addEventListener('click', function() {
+            urlListModal.innerHTML = '';  // Clear previous content
+
+            // Get all converted URLs from the page
+            document.querySelectorAll('.url-list p').forEach(function(item) {
+                const url = item.querySelector('a').href;
+                const listItem = document.createElement('li');
+                const downloadLink = document.createElement('a');
+                
+                // For download list, remove "vlc://" and show plain URL
+                downloadLink.href = url.replace('vlc://', '');
+                downloadLink.textContent = downloadLink.href;
+                downloadLink.target = "_blank";
+                listItem.appendChild(downloadLink);
+                urlListModal.appendChild(listItem);
+            });
+
+            // Show the modal
+            urlModal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', function() {
+            urlModal.style.display = 'none';  // Hide the modal
+        });
+
+        // Download plain URLs as a text file
+        document.getElementById('downloadPlainUrls').addEventListener('click', function() {
+            if (convertedUrls.length > 0) {
+                const blob = new Blob([convertedUrls.join('\n')], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'converted_links.txt';
+                link.click();
+            } else {
+                alert('No URLs to download.');
+            }
+        });
     </script>
 </body>
 </html>
