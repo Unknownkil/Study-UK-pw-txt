@@ -227,7 +227,7 @@
                 const trimmedLine = line.trim();
                 if (trimmedLine.includes('master.mpd')) {
                     const videoId = extractVideoId(trimmedLine);
-                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/240/main.m3u8`;
+                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/480/main.m3u8`;
                     const originalText = trimmedLine.split('master.mpd')[0].trim();
 
                     const para = document.createElement('p');
