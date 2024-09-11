@@ -276,18 +276,25 @@
             urlModal.style.display = 'none';  // Hide the modal
         });
 
-        // Download plain URLs as a text file
-        document.getElementById('downloadPlainUrls').addEventListener('click', function() {
-            if (convertedUrls.length > 0) {
-                const blob = new Blob([convertedUrls.join('\n')], { type: 'text/plain' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'converted_links.txt';
-                link.click();
-            } else {
-                alert('No URLs to download.');
-            }
-        });
+        // Download plain URLs as a text file and open in browser (Chrome)
+document.getElementById('downloadPlainUrls').addEventListener('click', function() {
+    if (convertedUrls.length > 0) {
+        const blob = new Blob([convertedUrls.join('\n')], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'converted_links.txt';
+        
+        // Simulate a click to trigger the download
+        link.click();
+
+        // Optional: Add a delay to redirect after initiating the download
+        setTimeout(function() {
+            window.location.href = link.href;  // Redirect to the file download
+        }, 1000);  // 1-second delay to ensure download starts before redirect
+    } else {
+        alert('No URLs to download.');
+    }
+});
     </script>
 </body>
 </html>
