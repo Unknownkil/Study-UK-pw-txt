@@ -51,6 +51,18 @@
             cursor: pointer;
             transition: all 0.4s ease;
         }
+  
+     .quality-select-container {
+            margin-bottom: 20px;
+        }
+
+        .quality-select-container select {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #448EE4;
+            color: white;
+        }
 
         .file-upload-container:hover {
             transform: translateY(-5px);
@@ -175,12 +187,23 @@
 </head>
 <body>
     <h1>Upload Your TXT File</h1>
-    <p>Select a TXT file containing <strong>master.mpd</strong> URLs, and the links will be converted.</p>
+    <p>Select a TXT file containing <strong>master.mpd</strong> URLs, and choose a quality to convert the links.</p>
 
     <!-- Custom File Uploader Button -->
     <div class="file-upload-container">
         <span>Upload TXT File</span>
         <input type="file" id="fileInput" accept=".txt">
+    </div>
+  
+  <div class="quality-select-container">
+        <label for="qualitySelect">Select Quality:</label>
+        <select id="qualitySelect">
+            <option value="240">240p</option>
+            <option value="360">360p</option>
+            <option value="480" selected>480p</option>
+            <option value="720">720p</option>
+            <option value="1080">1080p</option>
+        </select>
     </div>
 
     <div class="url-list" id="urlList"></div>
@@ -220,6 +243,7 @@
         function processFileContent(content) {
             const lines = content.split('\n');
             const urlListDiv = document.getElementById('urlList');
+          const selectedQuality = document.getElementById('qualitySelect').value;
             urlListDiv.innerHTML = '';  // Clear any previous URLs
             convertedUrls = [];  // Clear the previous converted URLs
 
@@ -227,7 +251,7 @@
                 const trimmedLine = line.trim();
                 if (trimmedLine.includes('master.mpd')) {
                     const videoId = extractVideoId(trimmedLine);
-                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/480/main.m3u8`;
+                    const newUrl = `https://jarvis-stream.pages.dev/${videoId}/hls/${selectedQuality}/main.m3u8`;
                     const originalText = trimmedLine.split('master.mpd')[0].trim();
 
                     const para = document.createElement('p');
